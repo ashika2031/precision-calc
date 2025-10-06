@@ -71,3 +71,30 @@ def test_cli_edge_paths():
     assert cli.handle_line("") == ""
     # history before any calculation should say it's empty
     assert cli.handle_line("history") == "(history is empty)"
+
+def test_cli_aliases_and_symbols():
+    from app.calculator.cli import CalculatorCLI
+    cli = CalculatorCLI()
+
+    # help alias 'h' (not just 'help')
+    out_help = cli.handle_line("h")
+    assert "Commands:" in out_help
+
+    # operator symbol aliases through the CLI (not just the factory)
+    assert cli.handle_line("+ 1 2 3") == "6.0"
+    assert cli.handle_line("/ 9 3") == "3.0"
+
+    # quit alias (not just 'exit')
+    assert cli.handle_line("quit") == "Goodbye!"
+
+
+def test_cli_whitespace_and_case():
+    from app.calculator.cli import CalculatorCLI
+    cli = CalculatorCLI()
+
+    # leading/trailing spaces and uppercase op name
+    assert cli.handle_line("   ADD   1   2   ") == "3.0"
+
+    # after one calc, history should list it (non-empty history branch)
+    hist = cli.handle_line("history")
+    assert "add" in hist or "ADD" in hist
