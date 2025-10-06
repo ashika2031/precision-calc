@@ -63,3 +63,11 @@ def test_cli_handle_line_errors():
     assert "Error:" in cli.handle_line("add two three")
     assert "Unknown operation" in cli.handle_line("pow 2 3")
     assert "Please provide numbers" in cli.handle_line("add")
+
+def test_cli_edge_paths():
+    from app.calculator.cli import CalculatorCLI
+    cli = CalculatorCLI()
+    # empty input should return empty string
+    assert cli.handle_line("") == ""
+    # history before any calculation should say it's empty
+    assert cli.handle_line("history") == "(history is empty)"
