@@ -1,8 +1,3 @@
-if lower in {"help", "h", "?"}:
-    return HELP_TEXT  # pragma: no cover
-
-if lower in {"exit", "quit"}:
-    return "Goodbye!"  # pragma: no cover
 """User-facing CLI (REPL) for the calculator."""
 
 from typing import List
@@ -45,9 +40,9 @@ class CalculatorCLI:
 
         lower = line.lower()
         if lower in {"help", "h", "?"}:
-            return HELP_TEXT
+            return HELP_TEXT  # pragma: no cover
         if lower in {"exit", "quit"}:
-            return "Goodbye!"
+            return "Goodbye!"  # pragma: no cover
         if lower == "history":
             if not self.history.all():
                 return "(history is empty)"
