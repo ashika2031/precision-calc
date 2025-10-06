@@ -9,19 +9,26 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+
     - name: Run tests with coverage
       run: |
+        # Run pytest, show coverage by file, and list any missing lines
         pytest --cov=app --cov-report=term-missing tests/
+
     - name: Enforce 100% coverage
       run: |
         coverage report --fail-under=100
