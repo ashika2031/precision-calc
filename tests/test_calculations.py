@@ -88,3 +88,16 @@ def test_cli_whitespace_and_case():
     cli = CalculatorCLI()
     assert cli.handle_line("   ADD   1   2   ") == "3.0"      # spaces + case
     assert cli.handle_line("   ") == ""                       # whitespace-only -> empty
+
+def test_cli_more_edge_branches():
+    from app.calculator.cli import CalculatorCLI
+    cli = CalculatorCLI()
+
+    # Help alias '?' (distinct branch from 'help'/'h')
+    assert "Commands:" in cli.handle_line("?")
+
+    # Whitespace input with tabs (not just spaces) -> empty string branch
+    assert cli.handle_line("\t\t") == ""
+
+    # Another operator symbol path to ensure symbol mapping is covered
+    assert cli.handle_line("* 2 3 4") == "24.0"
