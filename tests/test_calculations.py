@@ -98,3 +98,13 @@ def test_cli_whitespace_and_case():
     # after one calc, history should list it (non-empty history branch)
     hist = cli.handle_line("history")
     assert "add" in hist or "ADD" in hist
+
+def test_cli_more_edges():
+    from app.calculator.cli import CalculatorCLI
+    cli = CalculatorCLI()
+    # help alias '?'
+    assert "Commands:" in cli.handle_line("?")
+    # operator symbol (covered again, harmless)
+    assert cli.handle_line("* 2 3 4") == "24.0"
+    # whitespace-only input still returns empty string
+    assert cli.handle_line("   ") == ""
