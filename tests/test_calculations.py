@@ -47,9 +47,10 @@ def test_history_add_and_list_and_clear():
 
 def test_cli_handle_line_happy_paths():
     from app.calculator.cli import CalculatorCLI
-
     cli = CalculatorCLI()
-    assert "Calculator REPL" not in cli.handle_line("help")
+
+    # help text (new header "Commands:"), not the old "Calculator REPL"
+    assert "Commands:" in cli.handle_line("help")
     assert cli.handle_line("add 2 3") == "5.0"
     assert "1. add" in cli.handle_line("history")
     assert cli.handle_line("divide 8 2") == "4.0"
@@ -58,53 +59,32 @@ def test_cli_handle_line_happy_paths():
 
 def test_cli_handle_line_errors():
     from app.calculator.cli import CalculatorCLI
-
     cli = CalculatorCLI()
-    assert "Error:" in cli.handle_line("add two three")
-    assert "Unknown operation" in cli.handle_line("pow 2 3")
-    assert "Please provide numbers" in cli.handle_line("add")
+    assert "Error:" in cli.handle_line("add two three")     # invalid numbers
+    assert "Unknown operation" in cli.handle_line("pow 2 3") # invalid op
+    assert "Please provide numbers" in cli.handle_line("add")# missing args
+
 
 def test_cli_edge_paths():
     from app.calculator.cli import CalculatorCLI
     cli = CalculatorCLI()
-    # empty input should return empty string
-    assert cli.handle_line("") == ""
-    # history before any calculation should say it's empty
-    assert cli.handle_line("history") == "(history is empty)"
+    assert cli.handle_line("") == ""                          # empty input
+    assert cli.handle_line("history") == "(history is empty)" # empty history
+
 
 def test_cli_aliases_and_symbols():
     from app.calculator.cli import CalculatorCLI
     cli = CalculatorCLI()
-
-    # help alias 'h' (not just 'help')
-    out_help = cli.handle_line("h")
-    assert "Commands:" in out_help
-
-    # operator symbol aliases through the CLI (not just the factory)
-    assert cli.handle_line("+ 1 2 3") == "6.0"
-    assert cli.handle_line("/ 9 3") == "3.0"
-
-    # quit alias (not just 'exit')
-    assert cli.handle_line("quit") == "Goodbye!"
+    assert "Commands:" in cli.handle_line("h")                # help alias
+    assert "Commands:" in cli.handle_line("?")                # help alias '?'
+    assert cli.handle_line("+ 1 2 3") == "6.0"                # symbol op
+    assert cli.handle_line("* 2 3 4") == "24.0"               # symbol op
+    assert cli.handle_line("/ 9 3") == "3.0"                  # symbol op
+    assert cli.handle_line("quit") == "Goodbye!"              # quit alias
 
 
 def test_cli_whitespace_and_case():
     from app.calculator.cli import CalculatorCLI
     cli = CalculatorCLI()
-
-    # leading/trailing spaces and uppercase op name
-    assert cli.handle_line("   ADD   1   2   ") == "3.0"
-
-    # after one calc, history should list it (non-empty history branch)
-    hist = cli.handle_line("history")
-    assert "add" in hist or "ADD" in hist
-
-def test_cli_more_edges():
-    from app.calculator.cli import CalculatorCLI
-    cli = CalculatorCLI()
-    # help alias '?'
-    assert "Commands:" in cli.handle_line("?")
-    # operator symbol (covered again, harmless)
-    assert cli.handle_line("* 2 3 4") == "24.0"
-    # whitespace-only input still returns empty string
-    assert cli.handle_line("   ") == ""
+    assert cli.handle_line("   ADD   1   2   ") == "3.0"      # spaces + case
+    assert cli.handle_line("   ") == ""                       # whitespace-only -> empty
